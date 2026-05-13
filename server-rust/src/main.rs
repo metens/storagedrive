@@ -5,7 +5,7 @@ use axum::{
     Router,
 };
 
-use std::{fs};
+use std::{fs, net::SocketAddr};
 
 use tower_http::services::ServeDir; // allow serving files from disk over HTTP (the storage folder)
 
@@ -24,8 +24,12 @@ async fn main() {
         .route("/files", get(list_files))
         .nest_service("/download", ServeDir::new(STORAGE_DIR));
 
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    println!("Storage Drive server running on http:://{}", addr);
+
     // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
