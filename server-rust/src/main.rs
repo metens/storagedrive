@@ -19,9 +19,9 @@ async fn main() {
 
     // build our application with a single route
     let app = Router::new()
-        .route("/", get(root)) // Call the async function root
-        .route("/list", get(list_files))
-        .route("/upload", get(upload_file))
+        .route("/", get(root))
+        .route("/upload", post(upload_file))
+        .route("/files", get(list_files))
         .nest_service("/download", ServeDir::new(STORAGE_DIR));
 
     // run our app with hyper, listening globally on port 3000
@@ -48,5 +48,19 @@ async fn list_files() -> impl IntoResponse {
 }
 
 async fn upload_file(mut multipart: Multipart) -> impl IntoResponse {
+    while let Some(field) = multipart.next_field().await.unwrap() {
+        let file_name = field.file_name().unwrap_or("uploaded_file").to_string();
+        let data = field.bytes().await.unwrap();
 
+        let path = format!("{}/{}", STORAGE_DIR, sanitize_filename(&file_name));
+        fs::write(&path, data).unwrap();
+
+        return format!("Uploaded file: {}", file_name);
+    }
+
+    "No file uploaded".to_string()
+}
+
+fn sanitize_filename(name: &str) -> String {
+    name.replace("/", "_").replace("\\", "_")
 }
