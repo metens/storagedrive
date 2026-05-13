@@ -5,6 +5,8 @@ use axum::{
 
 use std::{fs};
 
+use tower_http::services::ServeDir; // allow serving files from disk over HTTP (the storage folder)
+
 #[tokio::main]
 async fn main() {
 
@@ -14,9 +16,14 @@ async fn main() {
         .expect("failed to create storage directory"); // if failuer
 
     // build our application with a single route
-    let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let app = Router::new()
+        .route("/", get(root)); // Call the async function root
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn root() -> &'static str {
+    "Server is running"
 }
