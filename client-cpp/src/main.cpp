@@ -2,26 +2,12 @@
 #include <cstdlib>
 #include <string>
 #include <cpr/cpr.h> // docs: https://docs.libcpr.dev/advanced-usage.html#other-request-methods
+#include <fstream>
 
-int test() {
+void upload_file(const std::string& filepath) {
     /*
     * C++ Requests: https://github.com/libcpr/cpr?utm_source
     */
-
-    std::string url = "https://nathanmetens.dev";
-    
-    cpr::Response r = 
-        cpr::Get(cpr::Url{url},
-        cpr::Authentication{"user", "pass", cpr::AuthMode::BASIC},
-        cpr::Parameters{{"anon", "true"}, {"key", "value"}});
-
-    std::cout << r.status_code << std::endl;              // 200
-    std::cout << r.header["content-type"] << std::endl;   // application/json; charset=utf-8
-    std::cout << r.text << std::endl;                     // JSON text string
-    return 0;
-}
-
-void upload_file(const std::string& filepath) {
     cpr::Response r = 
         cpr::Post(
             cpr::Url{"http://127.0.0.1:3000/upload"},
@@ -44,8 +30,26 @@ void list_files() {
     return;
 }
 
-void download_file(char* file) {
+void download_file(const std::string& filename) {
+    std::string url = "http://127.0.0.1:3000/download/" + filename;
 
+    cpr::Response r = 
+        cpr::Get(cpr::Url{url});
+
+    if (r.status_code != 200) {
+        std::cout << "Download failed\n";
+        return;
+    }
+
+    std::ofstream file(filename, std::ios::binary); // open files in binary mode
+
+    file.write(r.text.c_str(), r.text.size());
+
+    file.close();
+
+    std::cout << "Downloaded: " << filename << std::endl;
+
+    return;
 }
 
 int main(int argc, char** argv) {
