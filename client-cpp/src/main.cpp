@@ -35,16 +35,12 @@ void upload_file(const std::string& filepath) {
 }
 
 void list_files() {
-    std::string url = "https://nathanmetens.dev";
+    std::string url = "http://127.0.0.1:3000/files";
     
     cpr::Response r = 
-        cpr::Get(cpr::Url{url},
-        cpr::Authentication{"user", "pass", cpr::AuthMode::BASIC},
-        cpr::Parameters{{"anon", "true"}, {"key", "value"}});
+        cpr::Get(cpr::Url{url});
 
-    std::cout << r.status_code << std::endl;              // 200
-    std::cout << r.header["content-type"] << std::endl;   // application/json; charset=utf-8
-    std::cout << r.text << std::endl;                     // JSON text string
+    std::cout << r.text << std::endl; // JSON text string
     return;
 }
 
