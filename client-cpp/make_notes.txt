@@ -1,0 +1,9 @@
+# first time make:
+cmake -S . -B build
+
+# after editing code:
+cmake --build build
+
+# same as:
+make
+

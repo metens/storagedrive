@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <cpr/cpr.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
 
     if (argc != 2) {
         std::cout << "Usage: ./storagedrive_client <file_path>\n";
