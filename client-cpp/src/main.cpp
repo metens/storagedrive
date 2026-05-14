@@ -7,29 +7,21 @@
 // Check for correct number of arguments and wether the command is supported.
 int main(int argc, char** argv) {
 
-    /* Three total arguments: 
-     *      1 (the storage client executible), 
-     *      2 (the http command to the server), 
-     *      3 (the file to upload to or download from the rust server).
-     */
-    if (argc < 3 && strcmp(argv[1],"list") != 0 ) {
-        std::cout << "Usage:\n";
-        std::cout << "./storagedrive_client upload <file>\n";
-        std::cout << "./storagedrive_client list\n";
-        std::cout << "./storagedrive_client download <file>\n";
+   if (argc < 2) {
+        usage();
         return 0;
     }
 
     std::string command = argv[1]; // upload, list, download
 
     // Filter commands for correct http request/response.
-    if (command == "upload") 
-        upload_file(argv[2]);
-    else if (command == "list") 
+    if (command == "list" && argc >= 2) 
         list_files();
-    else if (command == "download") 
+    else if (command == "upload" && argc == 3)
+        upload_file(argv[2]);
+    else if (command == "download" && argc == 3) 
         download_file(argv[2]);
-    else std::cout << "Unknown command." << std::endl;
+    else usage();
 
     return 1;
 }

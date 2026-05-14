@@ -7,6 +7,18 @@
 #include <cpr/cpr.h> // docs: https://docs.libcpr.dev/advanced-usage.html#other-request-methods
 #include <fstream>
 
+/* Three total arguments: 
+ *      1 (the storage client executible), 
+ *      2 (the http command to the server), 
+ *      3 (the file to upload to or download from the rust server).
+ */
+void usage() {
+    std::cout << "Usage:\n";
+    std::cout << "./storagedrive_client upload <file>\n";
+    std::cout << "./storagedrive_client list\n";
+    std::cout << "./storagedrive_client download <file>\n";
+}
+
 // Upload a file to the rust server.
 void upload_file(const std::string& filepath) {
     /*
